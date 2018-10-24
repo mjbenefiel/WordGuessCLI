@@ -1,31 +1,30 @@
-const Letter = require('./Letter.js');
-function Word(wordString) {
-    // console.log('making a new Word', wordString);
-    
-    this.letterArray = [];
-    
-    wordString.split('').forEach(element => {
-        this.letterArray.push(new Letter(element));
+const Letter = require("./letter.js");
+
+function Word(word) {
+  this.word = word;
+  this.letters = [];
+
+  this.makeLetters = function() {
+    let wordArr = this.word.split("");
+    for(let i = 0; i < wordArr.length; i++) {
+      let newLetter = new Letter(wordArr[i]);
+      this.letters.push(newLetter);
+    }
+  }
+
+  this.makeGuess = function(guess) {
+    this.letters.forEach(letter => {
+      letter.checkLetter(guess);
     });
+  }
 
-    this.toString = function() {
-        return this.letterArray.join(' ');
-    }
-
-    this.makeGuess = function (guessedLetter) {
-        this.letterArray.forEach(element => {
-            element.makeGuess(guessedLetter);
-        });
-    }
-
-    // this.allGuessed = function() {
-    //     return this.letterArray.reduce((accumulator, currentValue) => (accumulator && currentValue.guessed), true);
-    // }
-
-    this.allGuessed = function() {
-        return this.letterArray.every((currentValue) => currentValue.guessed);
-    }
+  this.update = function() {
+    let printedWord = "";
+    this.letters.forEach(letter => {
+      printedWord += letter.getCharacter() + " ";
+    });
+    return printedWord;
+  }
 }
-
 
 module.exports = Word;

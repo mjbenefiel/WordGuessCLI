@@ -1,100 +1,95 @@
+const Word = require("./word.js");
+const inquirer = require("inquirer");
 
-const Word = require('./Word.js');
-const inquirer = require('inquirer');
+const wordBank = ["HTML","CSS", "JS"];
 
-var target;
-var targetWord;
-var guesses;
-var guessesLeft;
+let guesses;
+let pickedWords;
+let word;
+let pickedWord;
 
-const wordList = ["JS", "HTML", "CSS"]; 
-
-    // Select a word from the given list
-    function randomWord(wordList) {
-        var index = Math.floor(Math.random() * wordList.length);
-        return wordList[index];
-    }
-
-const questions = [
-    {
-        name: 'letterGuessed',
-        message: 'Guess a letter',
-        validate: function (value) {
-            var valid = (value.length === 1) && ('abcdefghijklmnopqrstuvwxyz'.indexOf(value.charAt(0).toLowerCase()) !== -1); // fix letter logic later
-            return valid || 'Please enter a single letter';
-        },
-        when: function () {
-            return (!target.allGuessed() && guessesLeft > 0);
-        }
-    },
-    {
-        type: 'confirm',
-        name: 'playAgain',
-        message: 'Want to play again?',
-        // default: true,
-        when: function () {
-            return (target.allGuessed() || guessesLeft <= 0);
-        }
-    }
-];
-
-function resetGame() {
-    targetWord = randomWord(wordList);
-    // console.log(targetWord);
-    target = new Word(targetWord);
-    target.makeGuess(' ');
-    guesses = [];
-    guessesLeft = 9;
+function init() {
+  pickedWords = [];
+  console.log("Hello, and welcome to Coding Guess Game!");
+  console.log("------------------------------------------");
+  playGame();
 }
 
-function ask() {
-    // console.log('target.allGuessed():', target.allGuessed());
-    if (!target.allGuessed() && guessesLeft > 0) {
-        console.log(target + '');
-    }
-    
-    inquirer.prompt(questions).then(answers => {
-        // console.log('answers.playAgain ' + answers.playAgain);
-        if ('playAgain' in answers && !answers.playAgain) {
-            console.log('thanks for playing');
-            process.exit();
-        }
-        if (answers.playAgain) {
-            resetGame();
-        }
-
-        if (answers.hasOwnProperty('letterGuessed')) {
-            var currentGuess = answers.letterGuessed.toLowerCase();
-            
-            if (guesses.indexOf(currentGuess) === -1) {
-                guesses.push(currentGuess);
-                target.makeGuess(currentGuess);
-                if (targetWord.toLowerCase().indexOf(currentGuess.toLowerCase()) === -1) {
-                    guessesLeft--;
-                }
-            } else {
-                console.log('you already guessed', currentGuess);
-                
-            }
-        }
-
-        if (!target.allGuessed()) {
-            if (guessesLeft < 1) {
-                console.log('no more guesses');
-                console.log(targetWord, 'was the correct answer.');
-
-            } else {
-                console.log('guesses so far:', guesses.join(' '));
-                console.log('guesses remaining:', guessesLeft);
-            }
-
-        } else {
-            console.log(targetWord, 'is the correct answer!');
-            // console.log(answers.playAgain);
-        }
-
-        ask();
-    }); // end inquirer.then
+function playGame() {
+ 
+  guesses = 5;
+  pickedWord = "";
+  if(pickedWords.length < wordBank.length) {
+    pickedWord = getWord();
+  } else {
+    // WIN CONDITION
+    console.log("You know a lot about coding.");
+    continuePrompt();
+  }
+  if(pickedWord) {
+    word = new Word(pickedWord);
+    word.makeLetters();
+    makeGuess();
+  }
 }
-resetGame();
-ask();
+
+function getWord() {
+  let rand = Math.floor(Math.random() * wordBank.length);
+  let randomWord = wordBank[rand];
+  if(pickedWords.indexOf(randomWord) === -1) {
+    pickedWords.push(randomWord);
+    return randomWord;
+  } else {
+    return getWord();
+  }
+}
+
+function makeGuess() {
+  let checker = [];
+  inquirer.prompt([
+    {
+      name: "guessedLetter",
+      message: word.update() + 
+              "\nGuess a letter!" + "\nGuesses Left: " + guesses + "\n" + "Your Guess: "
+    }
+  ])
+  .then(data => {
+    word.letters.forEach(letter => {
+      letter.checkLetter(data.guessedLetter);
+      checker.push(letter.getCharacter());
+    });
+    if(guesses > 0 && checker.indexOf("_") !== -1) {
+      guesses--;
+      if(guesses === 0) {
+        console.log("YOU RAN OUT OF GUESSES! GAME OVER.");
+        continuePrompt();
+      } else {
+        makeGuess();
+      }
+    } else {
+      console.log("CONGRATULATIONS! YOU GOT THE WORD!");
+      console.log(word.update());
+      playGame();
+    }
+  });
+}
+
+function continuePrompt() {
+  inquirer.prompt([
+      {
+        name: "continue",
+        type: "list",
+        message: "Would you like to play again?",
+        choices: ["Yes", "No"]
+      }
+    ])
+  .then(data => {
+      if(data.continue === "Yes") {
+        init();
+      } else {
+        console.log("Thanks for playing!");
+      }
+  });
+}
+
+init();
