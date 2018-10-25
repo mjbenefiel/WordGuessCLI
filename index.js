@@ -10,7 +10,7 @@ const MAX_GUESSES = 5;
 var playGame = function() {
 
     var gameWord = new Word();
-    var countIncorrectGuesses = 0;
+    var incorrectGuessCount = 0;
     var guessedLetters = [];
 
     //////////////////////////
@@ -30,7 +30,7 @@ var playGame = function() {
     displayWord(gameWord);
 
     var askForLetter = function() {
-        if (countIncorrectGuesses < MAX_GUESSES) {
+        if (incorrectGuessCount < MAX_GUESSES) {
             inquirer.prompt([
                 {
                     type: "input",
@@ -50,12 +50,12 @@ var playGame = function() {
                         if (found) {
                             console.log(chalk.green("\nCORRECT!\n")) ;
                         } else {
-                            countIncorrectGuesses++;
+                            incorrectGuessCount++;
                             console.log(chalk.red("\nINCORRECT\n"));
-                            console.log(MAX_GUESSES - countIncorrectGuesses + " guess(es) remaining!!!\n");
+                            console.log(MAX_GUESSES - incorrectGuessCount + " guess(es) remaining!!!\n");
                         };
 
-                        if (MAX_GUESSES - countIncorrectGuesses != 0) { displayWord(gameWord); };
+                        if (MAX_GUESSES - incorrectGuessCount != 0) { displayWord(gameWord); };
 
                         // console.log("Solved? " + gameWord.wordSolved());
                         if (!gameWord.wordSolved()) {
