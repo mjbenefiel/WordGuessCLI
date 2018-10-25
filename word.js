@@ -1,30 +1,71 @@
-const Letter = require("./letter.js");
+var Letter = require("./letter.js");
 
-function Word(word) {
-  this.word = word;
-  this.letters = [];
+var WordCategories = [
+    { "name": "All",
+      "wordlist": ["HTML", "CSS", "JS", "Web Developer"] }
+ ];
 
-  this.makeLetters = function() {
-    let wordArr = this.word.split("");
-    for(let i = 0; i < wordArr.length; i++) {
-      let newLetter = new Letter(wordArr[i]);
-      this.letters.push(newLetter);
+ // Word Constructor
+
+var Word = function() {
+    this.letters = [];
+    this.guessWord = '';
+    this.wordBank = WordCategories[0].wordlist;  
+
+    this.selectRandomWord = function() {
+        var randomEntry = Math.floor(Math.random() * this.wordBank.length);
+
+        this.guessWord = this.wordBank[randomEntry].toUpperCase();
+
+        // for each letter in the guessWord, create a letter object
+        for (i=0; i < this.guessWord.length; i++) {
+            this.letters.push(new Letter(this.guessWord[i]));
+        }
+    };
+
+    this.makeGuess = function(character) {
+        var found = false;
+
+        // for each letter, check to see if it is guessed and set it accordingly
+        for (i=0;i < this.letters.length; i++) {
+            // console.log("letter being guessed: " + character);
+            var letterFound = this.letters[i].guessLetter(character);
+            // console.log("letter found: " + letterFound);
+            // console.log("letter guessed: " + this.letters[i].isGuessed);
+
+            if (letterFound) {found = true;};
+        }
+        return found;
+    };
+
+    this.wordSolved = function() {
+
+        for (i=0; i < this.letters.length; i++) {
+            if (this.letters[i].isGuessed === false) {
+                return false;
+            }
+        }
+
+        return true;
     }
-  }
+};
 
-  this.makeGuess = function(guess) {
-    this.letters.forEach(letter => {
-      letter.checkLetter(guess);
-    });
-  }
 
-  this.update = function() {
-    let printedWord = "";
-    this.letters.forEach(letter => {
-      printedWord += letter.getCharacter() + " ";
-    });
-    return printedWord;
-  }
-}
+// add toString method to the Word object
+
+
+// toString method
+Word.prototype.toString = function() {
+    var gameWord = '';
+
+    for (i=0;i < this.letters.length; i++) {
+        gameWord = gameWord + " " + this.letters[i];
+    }
+    gameWord = gameWord + "\n";
+    return gameWord;
+};
+
+
+// export the word object for use
 
 module.exports = Word;

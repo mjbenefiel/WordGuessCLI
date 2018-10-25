@@ -1,95 +1,91 @@
-const Word = require("./word.js");
-const inquirer = require("inquirer");
+var inquirer = require("inquirer");
+var Word = require("./word.js");
+var chalk = require("chalk")
 
-const wordBank = ["HTML","CSS", "JS"];
+const MAX_GUESSES = 5;
 
-let guesses;
-let pickedWords;
-let word;
-let pickedWord;
+////////////////////////////////
+// play game
+////////////////////////////////
+var playGame = function() {
 
-function init() {
-  pickedWords = [];
-  console.log("Hello, and welcome to Coding Guess Game!");
-  console.log("------------------------------------------");
-  playGame();
-}
+    var gameWord = new Word();
+    var countIncorrectGuesses = 0;
+    var guessedLetters = [];
 
-function playGame() {
- 
-  guesses = 5;
-  pickedWord = "";
-  if(pickedWords.length < wordBank.length) {
-    pickedWord = getWord();
-  } else {
-    // WIN CONDITION
-    console.log("You know a lot about coding.");
-    continuePrompt();
-  }
-  if(pickedWord) {
-    word = new Word(pickedWord);
-    word.makeLetters();
-    makeGuess();
-  }
-}
+    //////////////////////////
+    // game functions
+    //////////////////////////
+    function displayWord (ele) {
+        // console.log(g.letters);
 
-function getWord() {
-  let rand = Math.floor(Math.random() * wordBank.length);
-  let randomWord = wordBank[rand];
-  if(pickedWords.indexOf(randomWord) === -1) {
-    pickedWords.push(randomWord);
-    return randomWord;
-  } else {
-    return getWord();
-  }
-}
-
-function makeGuess() {
-  let checker = [];
-  inquirer.prompt([
-    {
-      name: "guessedLetter",
-      message: word.update() + 
-              "\nGuess a letter!" + "\nGuesses Left: " + guesses + "\n" + "Your Guess: "
+        //using prototype with toString()
+        console.log(ele + '');
     }
-  ])
-  .then(data => {
-    word.letters.forEach(letter => {
-      letter.checkLetter(data.guessedLetter);
-      checker.push(letter.getCharacter());
-    });
-    if(guesses > 0 && checker.indexOf("_") !== -1) {
-      guesses--;
-      if(guesses === 0) {
-        console.log("YOU RAN OUT OF GUESSES! GAME OVER.");
-        continuePrompt();
-      } else {
-        makeGuess();
-      }
-    } else {
-      console.log("CONGRATULATIONS! YOU GOT THE WORD!");
-      console.log(word.update());
-      playGame();
+
+    // get the random word
+    gameWord.selectRandomWord();
+    console.log(chalk.keyword('pink')("\n<<<<< NEW GAME >>>>>"));
+    // console.log("\n" + gameWord.guessWord);
+    displayWord(gameWord);
+
+    var askForLetter = function() {
+        if (countIncorrectGuesses < MAX_GUESSES) {
+            inquirer.prompt([
+                {
+                    type: "input",
+                    message: "Guess a letter!",
+                    name: "letter"
+                }
+            ])
+            .then(function(answers){
+                if (answers.letter.length === 1) {
+
+                    // if the letter has not been guessed before, process it
+                    if (guessedLetters.indexOf(answers.letter) === -1) {
+                        guessedLetters.push(answers.letter);
+
+                        var found = gameWord.makeGuess(answers.letter);
+
+                        if (found) {
+                            console.log(chalk.green("\nCORRECT!\n")) ;
+                        } else {
+                            countIncorrectGuesses++;
+                            console.log(chalk.red("\nINCORRECT\n"));
+                            console.log(MAX_GUESSES - countIncorrectGuesses + " guess(es) remaining!!!\n");
+                        };
+
+                        if (MAX_GUESSES - countIncorrectGuesses != 0) { displayWord(gameWord); };
+
+                        // console.log("Solved? " + gameWord.wordSolved());
+                        if (!gameWord.wordSolved()) {
+                            askForLetter();
+                        } else {
+                            console.log(chalk.blue("You got it!!! Next word."));
+                            // start new game
+                            playGame();
+                        }
+                    } else {
+                        console.log(chalk.yellow("\nYou've already guessed this letter. Guess again.\n"));
+                        askForLetter();
+                    }
+
+                } else {
+                    console.log(chalk.yelllow("\nEnter only one letter.  Guess again.\n"));
+                    askForLetter();
+                }
+
+            });
+        } else {
+            console.log("GAME OVER.\n");
+            console.log("The answer was: " + gameWord.guessWord + ".  Play again.\n");
+            playGame();
+        }
+
     }
-  });
-}
 
-function continuePrompt() {
-  inquirer.prompt([
-      {
-        name: "continue",
-        type: "list",
-        message: "Would you like to play again?",
-        choices: ["Yes", "No"]
-      }
-    ])
-  .then(data => {
-      if(data.continue === "Yes") {
-        init();
-      } else {
-        console.log("Thanks for playing!");
-      }
-  });
-}
+    askForLetter();
+};
 
-init();
+// play game
+playGame();
