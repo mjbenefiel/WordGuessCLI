@@ -2,7 +2,7 @@ var Letter = require("./letter.js");
 
 var WordCategories = [
     { "name": "All",
-      "wordlist": ["HTML", "CSS", "JS", "Web Developer"] }
+      "wordlist": ["HTML", "CSS", "JS"] }
  ];
 
  // Word Constructor
@@ -56,13 +56,13 @@ var Word = function() {
 
 // toString method
 Word.prototype.toString = function() {
-    var gameWord = '';
+  var gameWord = '';
 
-    for (i=0;i < this.letters.length; i++) {
-        gameWord = gameWord + " " + this.letters[i];
-    }
-    gameWord = gameWord + "\n";
-    return gameWord;
+  for (i=0;i < this.letters.length; i++) {
+      gameWord = gameWord + " " + this.letters[i];
+  }
+  gameWord = gameWord + "\n";
+  return gameWord;
 };
 
 

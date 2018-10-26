@@ -2,7 +2,7 @@ var inquirer = require("inquirer");
 var Word = require("./word.js");
 var chalk = require("chalk")
 
-const MAX_GUESSES = 5;
+
 
 ////////////////////////////////
 // play game
@@ -30,7 +30,7 @@ var playGame = function() {
     displayWord(gameWord);
 
     var askForLetter = function() {
-        if (incorrectGuessCount < MAX_GUESSES) {
+        if (incorrectGuessCount < 5) {
             inquirer.prompt([
                 {
                     type: "input",
@@ -52,10 +52,10 @@ var playGame = function() {
                         } else {
                             incorrectGuessCount++;
                             console.log(chalk.red("\nINCORRECT\n"));
-                            console.log(MAX_GUESSES - incorrectGuessCount + " guess(es) remaining!!!\n");
+                            console.log(5 - incorrectGuessCount + " guess(es) remaining!!!\n");
                         };
 
-                        if (MAX_GUESSES - incorrectGuessCount != 0) { displayWord(gameWord); };
+                        if (5 - incorrectGuessCount != 0) { displayWord(gameWord); };
 
                         // console.log("Solved? " + gameWord.wordSolved());
                         if (!gameWord.wordSolved()) {
@@ -71,14 +71,14 @@ var playGame = function() {
                     }
 
                 } else {
-                    console.log(chalk.yelllow("\nEnter only one letter.  Guess again.\n"));
+                    console.log(chalk.yellow("\nEnter only one letter.  Guess again.\n"));
                     askForLetter();
                 }
 
             });
         } else {
-            console.log("GAME OVER.\n");
-            console.log("The answer was: " + gameWord.guessWord + ".  Play again.\n");
+            console.log(chalk.red("GAME OVER.\n"));
+            console.log(chalk.yellow("The answer was: " + gameWord.guessWord + ".  Play again.\n"));
             playGame();
         }
 
