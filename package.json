@@ -19,6 +19,7 @@
   "homepage": "https://github.com/mjbenefiel/WordGuessCLI#readme",
   "dependencies": {
     "chalk": "^2.4.1",
+    "figlet": "^1.2.1",
     "inquirer": "^6.2.0",
     "prompt": "^1.0.0"
   }
