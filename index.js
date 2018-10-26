@@ -10,7 +10,7 @@ var chalk = require("chalk")
 var playGame = function() {
 
     var gameWord = new Word();
-    var incorrectGuessCount = 0;
+    var guesses = 5;
     var guessedLetters = [];
 
     //////////////////////////
@@ -30,7 +30,7 @@ var playGame = function() {
     displayWord(gameWord);
 
     var askForLetter = function() {
-        if (incorrectGuessCount < 5) {
+        if (guesses > 0) {
             inquirer.prompt([
                 {
                     type: "input",
@@ -50,12 +50,12 @@ var playGame = function() {
                         if (found) {
                             console.log(chalk.green("\nCORRECT!\n")) ;
                         } else {
-                            incorrectGuessCount++;
+                            guesses--;
                             console.log(chalk.red("\nINCORRECT\n"));
-                            console.log(5 - incorrectGuessCount + " guess(es) remaining!!!\n");
+                            console.log(guesses + " guess(es) remaining!!!\n");
                         };
 
-                        if (5 - incorrectGuessCount != 0) { displayWord(gameWord); };
+                        if (guesses != 0) { displayWord(gameWord); };
 
                         // console.log("Solved? " + gameWord.wordSolved());
                         if (!gameWord.wordSolved()) {
