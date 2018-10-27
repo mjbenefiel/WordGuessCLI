@@ -95,6 +95,8 @@ This is a word guess CLI app that utilizes constructor functions.
 
 - index.js
 
+  - Require inquirer, Word, chalk and figlet
+
   - Game intro prompt with full instructions
     - wraps entire game
     - inquirer prompt to begin play
