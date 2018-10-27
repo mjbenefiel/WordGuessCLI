@@ -91,9 +91,9 @@ var playGame = function() {
                         };
 
                         if (guesses === 1) {
-                          console.log(chalk.hex('440CE8')(guesses + " guess remaining\n"))
+                          console.log(chalk.hex('008080')(guesses + " guess remaining\n"))
                         } else {
-                          console.log(chalk.hex('440CE8')(guesses + " guesses remaining\n"))
+                          console.log(chalk.hex('008080')(guesses + " guesses remaining\n"))
                         }
 
                         if (guesses != 0) { displayWord(gameWord); };
@@ -102,7 +102,7 @@ var playGame = function() {
                         if (!gameWord.wordSolved()) {
                             askForLetter();
                         } else {
-                            console.log(chalk.hex('440CE8')("You got it!!! Next word."));
+                            console.log(chalk.hex('008080')("Correct! Next word."));
                             // start new game
                             playGame();
                         }
