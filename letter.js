@@ -1,11 +1,11 @@
-const LETTER_PLACEHOLDER = '_';
+const DASHES = '_';
 
 
 // constructor function for creating new letters
 
 var Letter = function(letter) {
     this.character = letter;
-    this.placeholder = (this.character === ' ' || (/[.']/.test(this.character))) ? this.character : LETTER_PLACEHOLDER;
+    this.placeholder = (this.character === ' ' || (/[.']/.test(this.character))) ? this.character : DASHES;
     this.isGuessed = (this.character === ' ' || (/[.']/.test(this.character))) ? true : false;
 };
 

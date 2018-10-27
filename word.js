@@ -2,7 +2,7 @@ var Letter = require("./letter.js");
 
 var WordCategories = [
     { "name": "All",
-      "wordlist": ["HTML", "CSS", "JS"] }
+      "wordlist": ["JavaScript", "Java", "Python", "PHP", "Ruby"] }
  ];
 
  // Word Constructor
