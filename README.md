@@ -36,8 +36,6 @@ This is a word guess CLI app that utilizes constructor functions.
 
 - You lose if you run out of guesses before the entire word is revealed. The next word will display.
 
-- You lose if you run out of guesses before the entire word is revealed. The next word will display.
-
 - You can exit the game at any time by pressing Ctrl + C on your keyboard.
 
 <hr>
