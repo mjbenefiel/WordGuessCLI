@@ -102,7 +102,7 @@ This is a word guess CLI app that utilizes constructor functions.
   - playGame constructor function wraps game functionality
     - declare gameWord
     - declare number of guesses
-    - set empty guessedLEtters array
+    - set empty guessedLetters array
     - displayWord function used to pass through argument within selectRandomWord();
     - selectRandomWord selects the random word, as defined in word.js
       - display new word
