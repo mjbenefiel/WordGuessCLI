@@ -19,15 +19,26 @@ This is a word guess CLI app that utilizes constructor functions.
 <hr>
 
 <h2> How it works </h2>
-Type into the command line....
 
-- ```node liri.js concert-this "artist/band name here"``` to return concert information from Bandsintown. 
+- Type ```node index.js``` into the command line to start the app.
 
-- ```node liri.js spotify-this-song "song name here"``` to return song information from Spotify. If no song is entered, a hard coded default song will return.
+- A prompt screen will appear, which provides detailed instructions on the game. You will also be asked if you are ready to play the game. Your options are "Yeah" and "Frick yeah!". Both options will start the game.
   
-- ```node liri.js movie-this "movie name here"``` to return movie information from OMDb. If no movie is entered, a hard coded default movie will return.
+- When prompted to guess a letter, press any letter (a-z) on the keyboard to guess a letter and hit enter.
   
-- ```node liri.js do-what-it-says``` to return information stored in random.txt
+- Your choice will be correct or incorrect. You will receive a message if you enter more than one letter at a time.
+
+- For every incorrect guess, the number of guesses decreases by one.
+
+- If correct, the letter you guessed populates the corresponding _ in the word.
+
+- You win if you correctly guess all the letters in the word before the number of guesses remaining equals 0.
+
+- You lose if you run out of guesses before the entire word is revealed. The next word will display.
+
+- You lose if you run out of guesses before the entire word is revealed. The next word will display.
+
+- You can exit the game at any time by pressing Ctrl + C on your keyboard.
 
 <hr>
 
@@ -35,86 +46,76 @@ Type into the command line....
 
 [Node.js](https://nodejs.org/en/)
 
-[chalk](https://www.npmjs.com/package/chalk)
+[Inquirer](https://www.npmjs.com/package/inquirer)
 
-[figlet](https://www.npmjs.com/package/figlet)
+[Chalk](https://www.npmjs.com/package/chalk)
 
-[fs](https://www.npmjs.com/package/fs)
-
-[request](https://www.npmjs.com/package/request)
-
-[Bandsintown API](http://www.artists.bandsintown.com/bandsintown-api)
-
-[OMDb API](http://www.omdbapi.com/)
-
-[Spotify API](https://developer.spotify.com/documentation/web-api/)
+[Figlet](https://www.npmjs.com/package/figlet)
 
 <hr></hr>
 
 <h4>Below is a thorough, but not comprehensive, step-by-step process of how I got the app running in terms of code</h4>
 
-- Navigate to root of project. Initialize package.json by running ```npm init -y```
+- Navigate to root of project. Initialize package.json by running ```npm init```
 
-- Creation of .gitignore file
+- letter.js
 
-- Creation of keys.js
-  - Spotify keys for export
+  - Letter constructor function that declares letter, placeholder and if letter is guessed
 
-- Creation of .env file to store Spotify API keys
+  - Letter.toString constructor function that returns a string representing the object every time the function is called 
 
-- Creation of random.txt with default result for do-what-it-says command
+  - Letter.guessLetter constructor function that returns if letter guessed is true or false
 
-- Creation of liri.js 
+  - export Letter
 
-- ```npm install dotenv```
+- word.js
 
-- ```npm install fs```
+  - require letter.js
 
-- ```npm install request```
+  - declare words to be guessed during game
 
-- ```npm install figlet```
+  - Word constructor function sets letters array, guessed word and wordBank. It also holds the following constructor functions: 
 
-- ```npm install node-spotify-api```
+    - selectRandomWord
+      - declares random entry
+      - sets guessWord to upper case
+      - runs for loop and creates letter object for each letter in the guessWord
+      
+    - makeGuess
+      - declare found variable
+      - run for loop to check if letter is guessed.
+        - if/else statement to set true/false conditions.
 
-- ```npm install chalk``` 
+    - wordSolved
+      - run for loop to check if word is solved.
 
-- declare command line variables (command, parameter)
+    - Word.toString constructor function that returns gameWords via for loop
 
-- switchCase(); switch statement holding:
-  - bandsInTown(parameter);
-  - spotifySong(parameter)
-  - omdbInfo(parameter);
-  - getRandom(parameter);
-  - display(parameter);
+    - export Word
 
-- bandsInTown();
-  - declare artist variable as parameter
-  - figlet "Bandsintown" for style
-  - Send request for concerts to Bandsintown API based off "artist" entered into parameter
-  - parse data into readable object
-  - return name, city, country and date of concerts
-  - Chalk package used for style
+- index.js
 
-- spotifySong();
-  - declare searchTrack variable as parameter
-  - set undefined parameter
-      - return Ace of Base The Sign if no track entered into parameter
-  - figlet "Spotify" for style
-  - search Spotify API and return artist, song, url preview and album name of song entered in parameter
-  - Chalk package used for style
+  - Game intro prompt with full instructions
+    - wraps entire game
+    - inquirer prompt to begin play
+    
+  - playGame constructor function wraps game functionality
+    - declare gameWord
+    - declare number of guesses
+    - set empty guessedLEtters array
+    - displayWord function used to pass through argument within selectRandomWord();
+    - selectRandomWord selects the random word, as defined in word.js
+      - display new word
+    - askforLetter constructor function
+      - inquirer prompt to guess letter if guesses greater than 0
+      -.then inquirer promise, which:
+        - defines and returns correct/incorrect guesses
+        - displays guesses remaining
+        - displays game word
+        - asks for letter if word is not solved
+        - moves to next word if word is solved
+        - determines if letter has already been guessed
+        - determines if more than one letter was guessed
+        - determines if guess are less than 0 and displays guessed word if out of guesses
+        - invokes playGame function
 
-- ombdInfo();
-  - set findMovie variable as parameter
-  - set undefined parameter
-    - return "Mr. Nobody" if no parameter entered
-  - figlet "OMDB" for style
-  - Send movie request to OMDb API and return title, release year, IMDB rating, Rotten Tomatoes rating, country, language, plot and actors
-  - Chalk package used for style
-
-- getRandom();
-  - read and return information in random.txt by utilizing if statement
-
-- display();
-  - append information to log.txt
-
-- call switchCase();
